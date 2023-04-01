@@ -1,7 +1,11 @@
 import pyrebase
 import streamlit
+import streamlit as st
 from datetime import datetime
 from collections.abc import Mapping
+from streamlit_lottie import st_lottie
+import requests
+
 
 #Firebase config key
 firebaseConfig = {
@@ -30,26 +34,33 @@ choice = streamlit.sidebar.selectbox('Login/SignUp',['Login','Sign Up'])
 
 #email = streamlit.sidebar.text_input('Enter your email address')
 #password = streamlit.sidebar.text_input('Enter your password')
+flag = 1
+p1 = ''
 p2 = ''
 if choice == 'Sign Up':
-    un = streamlit.sidebar.text_input('Please enter a username.')
-    email = streamlit.sidebar.text_input('Enter your email address')
-    p1 = streamlit.sidebar.text_input('Enter your password')
-    #p1 = 'aaaaaa'
-    #if(len(p1) < 6):
-       #streamlit.warning("Length of passowrd should be equal or greater than 6")
-    p2 = streamlit.sidebar.text_input('Enter your password again')
-    #p2 = 'aaaaaa'
-    #if(p1 != p2):
-        #streamlit.warning("Passwords don't match, renter your password.")
-if p2:
-  un_sub = streamlit.sidebar.button('Create my account')
+    un = streamlit.sidebar.text_input('Please enter a username.',key='1')
+    email = streamlit.sidebar.text_input('Enter your email address',key='2')
+    p1 = streamlit.sidebar.text_input('Enter your password',key='3')
+    p2 = streamlit.sidebar.text_input('Enter your password again',key='4')
+    un_sub = streamlit.sidebar.button('Create my account')
+    '''while flag!=0:
+      if len(p1) < 6:
+        st.warning('Length of password should be equal or greater than 6')
+        flag = 1
+      if p1!=p2:
+        st.warning("Passwords don't match, renter your password")
+        flag = 1
+      if len(p1) >= 6 and p1==p2:
+        flag = 0'''
+  
+if flag == 0:
   if un_sub == True:
     user = auth.create_user_with_email_and_password(email,p1)
     streamlit.success('Account created successfully')
     streamlit.balloons()
     user = auth.sign_in_with_email_and_password(email,p1)
     db.child(user['localId']).child("Username").set(un)
+    #db.child(user)
     db.child(user['localId']).child("ID").set(user['localId'])
     streamlit.title('Welcome' + un)
     streamlit.info('Please login again through the sidebar')
@@ -58,4 +69,39 @@ if p2:
 if choice == 'Login':
   un = streamlit.sidebar.text_input('Please enter your username.')
   p3 = streamlit.sidebar.text_input('Enter your password')
-  streamlit.success('Logged in successfully')
+  un_sub = st.sidebar.button('Log in')
+  if un_sub:
+    streamlit.success('Logged in successfully')
+    authentication_status = True
+    if authentication_status == True:
+
+      #st.set_page_config(page_title="Ojasva Singh 🤩🫦", page_icon = "👁️", layout="wide")
+      def load_ani(url):
+          req = requests.get(url)
+          if(req.status_code!=200):
+              return None
+          return req.json()
+
+      ani1 = load_ani("https://assets4.lottiefiles.com/packages/lf20_iv4dsx3q.json")
+      ani2 = load_ani("https://assets8.lottiefiles.com/packages/lf20_Y8UeVt.json")
+
+      with st.container():
+          st.subheader("Hi, I am Ojasva :wave:")
+          st.title("A Software Developer from India :earth_asia:")
+          st.write("Anything in general makes me curious, I am a table tennis player and i also love to read about neuroscience in my past time. Take a look at my miserable life here,")
+          st.write("[Instagram >](www.instagram.com/ojasvasingh_)")
+
+      with st.container():
+          st.write("---")
+          left_col , right_col = st.columns(2)
+          with left_col:
+              st.header("About me  💁🏽‍♂️")
+              st.write('##')
+              st.write(
+                  "I am a student at IIIT Delhi, pursuing Computer Science with Applied Mathematics:mortar_board:.Also I am soon going to be an SDE at Reliance Jio. My favourite language is Java, funny how I am codng in python at this moment.")
+              st.write("Technically this is just a dummy website for our USS project :stuck_out_tongue: so that we could test our authentication system, but I'm getting the vibe that this could be used as a blog page haha :laughing:")
+              st.write("Bubyeeeeee🥰")
+              st.write("Take a look at some of my work/projects")
+              st.write("[Learn More >](https://github.com/lucious20318)")
+          with right_col:
+              st_lottie(ani1,height=320,key="coding")
