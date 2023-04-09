@@ -48,23 +48,54 @@ if choice == 'Sign Up':
       user = auth.sign_in_with_email_and_password(email,password)
       db.child(user['localId']).child("Username").set(un)
       #db.child(user)
-      db.child(user['localId']).child("ID").set(user['localId'])
+      db.child(user['localId']).child("localID").set(user['localId'])
       streamlit.title('Welcome ' + un)
       streamlit.info('Please login again through the sidebar')
   
 if choice == 'Login':
   #un = streamlit.sidebar.text_input('Please enter your username.')
-  login = st.sidebar.button('Log in')
+  login = st.sidebar.checkbox('Login')
   if login:
-     user = auth.sign_in_with_email_and_password(email,password,)
-     st.write('<style>div.row-widget.stRadio> div{flex-direction:row;}</style>',unsafe_allow_html=True)
-     bio = st.radio('Go to',['Connect...','Profile','Contact Me'])
+     user = auth.sign_in_with_email_and_password(email,password)
+     st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>',unsafe_allow_html=True)
+     bio = st.radio('Go to',['Community Page','Profile','Contact Me'])
 
-     if bio == 'Connect...':
+     if bio == 'Community Page':
          st.write("Anckonjcdnkjsndjclnsljdnclsdnvncjldsnjcns")
          
      if bio == 'Profile':
-        un_sub = True
+        #Check for image
+        pimg = db.child(user['localID']).child("Image").get().val()
+        #If image is found
+        if pimg is not None:
+            img = db.child(user['localID']).child("Image").get()
+            for item in img.each():
+                i_choice = item.val()
+            st.image(i_choice)
+            exp = st.beta_expander('Change bio and image')
+            with exp:
+                newimgpath = st.text_input('Enter the path of your image')
+                upload_new = st.button('Upload')
+                if upload_new:
+                    uid = user['localID']
+                    fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
+                    a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
+                    db.child(user['localID']).child("Image").push(a_imgdata_url)
+                    st.success('Successfully uplaoded!')
+        #If no image is found
+        else:
+            st.info("No profile picture yet")
+            newimgpath = st.text_input('Enter the path of your image')
+            upload_new = st.button('Upload')
+            if upload_new:
+                uid = user['localID']
+                #Stored initiated bucket in firebase
+                fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
+                #URL for easy access
+                a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
+                #Put in realtime database
+                db.child(user['localID']).child("Image").push(a_imgdata_url)
+
         if un_sub:
             authentication_status = True
             if authentication_status == True:
@@ -104,25 +135,26 @@ if choice == 'Login':
          def local_css(filename):
              with open(filename) as f:
                 st.markdown(f"<style>{f.read()}</style>",unsafe_allow_html=True)
-                local_css("/Users/ojasvasingh/Desktop/DummyWb/streamlit-multipage-app-example-master/pages/styles.css")
+         
+         local_css("/Users/ojasvasingh/Desktop/Fin/styles.css")
        
-             with st.container():
-                st.write("---")
-                st.header("You can contact me from here .. 🤝🏽")
-                st.write("##")
+         with st.container():
+            st.write("---")
+            st.header("You can contact me from here .. 🤝🏽")
+            st.write("##")
 
-                contact_form = """
-                                <form action="https://formsubmit.co/ojasva963@gmail.com" method="POST">
-                                    <input type="hidden" name="_captcha" value="false">
-                                    <input type="text" name="Name" placeholder="Enter your name" required>
-                                    <input type="email" name="Email" placeholder="Enter your email" required>
-                                    <textarea name="Message" placeholder="Enter your query" required></textarea>
-                                    <button type="submit">Send</button>
-                                </form>
-                            """
-                
-                left_col , right_col = st.columns(2)
-                with left_col:
-                    st.markdown(contact_form, unsafe_allow_html=True)
-                with right_col:
-                    st.empty()
+            contact_form = """
+                            <form action="https://formsubmit.co/ojasva963@gmail.com" method="POST">
+                                <input type="hidden" name="_captcha" value="false">
+                                <input type="text" name="Name" placeholder="Enter your name" required>
+                                <input type="email" name="Email" placeholder="Enter your email" required>
+                                <textarea name="Message" placeholder="Enter your query" required></textarea>
+                                <button type="submit">Send</button>
+                            </form>
+                        """
+            
+            left_col , right_col = st.columns(2)
+            with left_col:
+                st.markdown(contact_form, unsafe_allow_html=True)
+            with right_col:
+                st.empty()
