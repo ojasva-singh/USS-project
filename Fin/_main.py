@@ -48,7 +48,7 @@ if choice == 'Sign Up':
       user = auth.sign_in_with_email_and_password(email,password)
       db.child(user['localId']).child("Username").set(un)
       #db.child(user)
-      db.child(user['localId']).child("localID").set(user['localId'])
+      db.child(user['localId']).child("ID").set(user['localId'])
       streamlit.title('Welcome ' + un)
       streamlit.info('Please login again through the sidebar')
   
@@ -61,26 +61,56 @@ if choice == 'Login':
      bio = st.radio('Go to',['Community Page','Profile','Contact Me'])
 
      if bio == 'Community Page':
-         st.write("Anckonjcdnkjsndjclnsljdnclsdnvncjldsnjcns")
+         st.write("\n")
+         st.write("\n")
+         c1,c2 = st.columns(2)
+         with c1:
+             nimg = db.child(user['localId']).child("Image").get().val()
+             if nimg is not None:
+                 val = db.child(user['localId']).child("Image").get()
+                 for item in val.each():
+                     item_choice = item.val()
+                 st.image(item_choice,use_column_width=True)
+             else:
+                 st.info("No picture uploaded yet, you can do so by going to your profile page")
+            
+             post = st.text_input("Share what's on your head!!",max_chars=150)
+             add_post = st.button('Share post')
+             if add_post:
+                 cur = datetime.now()
+                 dt_string = cur.strftime("%d/%m/%Y %H:%M:%S")
+                 post = {'Caption:' : post,
+                         'Time': dt_string}
+                 result = db.child(user['localId']).child("Posts").push(post)
+
+         with c2:
+             #c1.header('')
+             all_post = db.child(user['localId']).child("Posts").get()
+             if all_post.val() is not None:
+                 for item in reversed(all_post.each()):
+                     st.write(item.val())
+
          
      if bio == 'Profile':
+        st.write("\n")
+        st.write(("\n"))
         #Check for image
-        pimg = db.child(user['localID']).child("Image").get().val()
+        pimg = db.child(user['localId']).child("Image").get().val()
         #If image is found
         if pimg is not None:
-            img = db.child(user['localID']).child("Image").get()
+            img = db.child(user['localId']).child("Image").get()
             for item in img.each():
                 i_choice = item.val()
             st.image(i_choice)
-            exp = st.beta_expander('Change bio and image')
+            exp = st.expander('Change bio and image')
             with exp:
                 newimgpath = st.text_input('Enter the path of your image')
                 upload_new = st.button('Upload')
                 if upload_new:
-                    uid = user['localID']
+                    uid = user['localId']
                     fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
                     a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
-                    db.child(user['localID']).child("Image").push(a_imgdata_url)
+                    db.child(user['localId']).child("Image").push(a_imgdata_url)
                     st.success('Successfully uplaoded!')
         #If no image is found
         else:
@@ -88,14 +118,14 @@ if choice == 'Login':
             newimgpath = st.text_input('Enter the path of your image')
             upload_new = st.button('Upload')
             if upload_new:
-                uid = user['localID']
+                uid = user['localId']
                 #Stored initiated bucket in firebase
                 fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
                 #URL for easy access
                 a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
                 #Put in realtime database
-                db.child(user['localID']).child("Image").push(a_imgdata_url)
-
+                db.child(user['localId']).child("Image").push(a_imgdata_url)
+        un_sub = False
         if un_sub:
             authentication_status = True
             if authentication_status == True:
