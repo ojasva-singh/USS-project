@@ -74,31 +74,111 @@ if choice == 'Login':
 
          #Choice for selecting a different user
          choice = st.selectbox('Peope',res)
-         push = st.button('Show profile')
+         c1,c2,c3 = st.columns(3)
+         with c1:
+            push1 = st.button('Show Post')
+         with c2:
+            push2 = st.button("Show Profile")
 
-         if push:
-             for item in all_users.each():
-                 i_val = item.val()["Username"]
-                 if i_val == choice:
-                     uid = item.val()["ID"]
-                     usn = db.child(uid).child("Handle").get().val()
-                     st.markdown(usn,unsafe_allow_html=True)
+         if push1:
+            st.write("\n")
+            st.write("\n")
+            for item in all_users.each():
+                i_val = item.val()["Username"]
+                if i_val == choice:
+                    uid = item.val()["ID"]
+                    usn = db.child(uid).child("Username").get().val()
+                    st.markdown(usn,unsafe_allow_html=True)
 
-                     nimg = db.child(uid).child("Image").get().val()
-                     if nimg is not None:
-                         val = db.child(uid).child("Image").get()
-                         for item in val.each():
-                             img_choice = item.val()
-                             st.image(img_choice)
-                     else:
-                         st.info("No profile picture yet")
+                    nimg = db.child(uid).child("Image").get().val()
+                    if nimg is not None:
+                        val = db.child(uid).child("Image").get()
+                        for item in val.each():
+                            img_choice = item.val()
+                            c1,c2,c3 = st.columns(3)
+                            with c2:
+                                st.image(img_choice)
+                    else:
+                        st.info("Profile Picture not updated")
                     
-                     all_post = db.child(uid).child("Posts").get()
-                     if all_post.val() is not None:
-                         for item in reversed(all_post.each()):
-                             st.write(item.val())
-                             
-                             
+                    all_post = db.child(uid).child("Posts").get()
+                    if all_post.val() is not None:
+                        for item in reversed(all_post.each()):
+                            st.write(item.val())
+        
+         if push2:    
+            st.write("\n")
+            st.write("\n")
+            for item in all_users.each():
+                i_val = item.val()["Username"]
+                if i_val == choice:
+                    uid = item.val()["ID"]
+                    usn = db.child(uid).child("Username").get().val()
+                    st.markdown(usn,unsafe_allow_html=True)
+
+                    nimg = db.child(uid).child("Image").get().val()
+                    if nimg is not None:
+                        val = db.child(uid).child("Image").get()
+                        for item in val.each():
+                            img_choice = item.val()
+                            c1,c2,c3 = st.columns(3)
+                            with c2:
+                                st.image(img_choice)
+                    else:
+                        st.info("Profile Picture not updated")
+
+                    def load_ani(url):
+                        req = requests.get(url)
+                        if(req.status_code!=200):
+                            return None
+                        return req.json()
+        
+                    with st.container():
+                            #name = db.child(user['localId']).child("Information").child("Name").get()
+                            name = db.child(uid).child("Information").child("Name").get()
+                            if name.val() is not None:
+                                for item in name.each():
+                                    fin = item.val()
+                                st.subheader(fin)
+
+                            prof = db.child(uid).child("Information").child("Bio").get()
+                            if prof.val() is not None:
+                                for item in prof.each():
+                                    fin = item.val()
+                                st.title(fin)
+
+                            br_desc = db.child(uid).child("Information").child("descr").get()
+                            if br_desc is not None:
+                                for item in br_desc.each():
+                                    fin = item.val()
+                                st.write(fin)
+                            sm = db.child(uid).child("Information").child("SocialMedia").get()
+                            if sm is not None:
+                                for item in sm.each():
+                                    fin = item.val()
+                                st.write(fin)
+
+                    about = db.child(uid).child("Information").child("About").get()
+                    if about is not None:
+                        with st.container():
+                                st.write("---")
+                                left_col , right_col = st.columns(2)
+                                with left_col:
+                                    st.header("About me  💁🏽‍♂️")
+                                    st.write('##')
+                                    for item in about.each():
+                                        fin = item.val()
+                                    st.write(fin)
+                                with right_col:
+                                    an1 = db.child(uid).child("Information").child("Lottie").get()
+                                    if an1 is not None:
+                                        for item in an1.each():
+                                            fin = item.val()
+                                        ani1 = load_ani(fin)
+                                        st_lottie(ani1,height=320,key="coding")
+                        
+
+
      if bio == 'New Post':
          st.write("\n")
          st.write("\n")
@@ -140,7 +220,62 @@ if choice == 'Login':
             img = db.child(user['localId']).child("Image").get()
             for item in img.each():
                 i_choice = item.val()
-            st.image(i_choice)
+            
+            c1,c2,c3 = st.columns(3)
+            
+            with c2:
+                st.image(i_choice)
+            
+            def load_ani(url):
+                    req = requests.get(url)
+                    if(req.status_code!=200):
+                        return None
+                    return req.json()
+            
+            with st.container():
+                    #name = db.child(user['localId']).child("Information").child("Name").get()
+                    name = db.child(user['localId']).child("Information").child("Name").get()
+                    if name.val() is not None:
+                        for item in name.each():
+                            fin = item.val()
+                        st.subheader(fin)
+
+                    prof = db.child(user['localId']).child("Information").child("Bio").get()
+                    if prof.val() is not None:
+                        for item in prof.each():
+                            fin = item.val()
+                        st.title(fin)
+
+                    br_desc = db.child(user['localId']).child("Information").child("descr").get()
+                    if br_desc is not None:
+                        for item in br_desc.each():
+                            fin = item.val()
+                        st.write(fin)
+                    sm = db.child(user['localId']).child("Information").child("SocialMedia").get()
+                    if sm is not None:
+                        for item in sm.each():
+                            fin = item.val()
+                        st.write(fin)
+
+            about = db.child(user['localId']).child("Information").child("About").get()
+            if about is not None:
+                with st.container():
+                        st.write("---")
+                        left_col , right_col = st.columns(2)
+                        with left_col:
+                            st.header("About me  💁🏽‍♂️")
+                            st.write('##')
+                            for item in about.each():
+                                fin = item.val()
+                            st.write(fin)
+                        with right_col:
+                            an1 = db.child(user['localId']).child("Information").child("Lottie").get()
+                            if an1 is not None:
+                                for item in an1.each():
+                                    fin = item.val()
+                                ani1 = load_ani(fin)
+                                st_lottie(ani1,height=320,key="coding")
+
             exp = st.expander('Change bio and image')
             with exp:
                 newimgpath = st.text_input('Enter the path of your image')
@@ -150,10 +285,52 @@ if choice == 'Login':
                     fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
                     a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
                     db.child(user['localId']).child("Image").push(a_imgdata_url)
-                    st.success('Successfully uplaoded!')
+                    #st.success('Successfully uploaded!')
+                
+                name = st.text_input('Enter your name')
+                upload_new = st.button('Upload',key=1)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child("Information").child("Name").push(name)
+                    #st.success('Successfully uploaded!')
+                
+                prof = st.text_input('Enter your bio')
+                upload_new = st.button('Upload',key=2)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child("Information").child("Bio").push(prof)
+                    #st.success('Successfully uploaded!')
+                
+                an1 = st.text_input('You can choose an animation URL to fancy your profile from the below website')
+                st.write("https://lottiefiles.com")
+                upload_new = st.button('Upload',key=3)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child("Information").child("Lottie").push(an1)
+                    #st.success('Successfully uploaded!')
+                
+                br_desc = st.text_input('Enter a brief description about yourself')
+                upload_new = st.button('Upload',key=4)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child('Information').child("descr").push(br_desc)
+                
+                sm_handle =  st.text_input('Enter your social media handle')
+                upload_new = st.button('Upload',key=5)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
+                
+                pr_desc = st.text_input('Tell people more about yourself')
+                upload_new = st.button('Upload',key=6)
+                if upload_new:
+                    uid = user['localId']
+                    result = db.child(uid).child('Information').child("About").push(pr_desc)
+                
+
         #If no image is found
         else:
-            st.info("No profile picture yet")
+            #st.info("No profile picture yet")
             newimgpath = st.text_input('Enter the path of your image')
             upload_new = st.button('Upload')
             if upload_new:
@@ -164,11 +341,52 @@ if choice == 'Login':
                 a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
                 #Put in realtime database
                 db.child(user['localId']).child("Image").push(a_imgdata_url)
+
+            name = st.text_input('Enter your name')
+            upload_new = st.button('Upload',key=1)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child("Information").child("Name").push(name)
+                #st.success('Successfully uploaded!')
+            
+            prof = st.text_input('Enter your bio')
+            upload_new = st.button('Upload',key=2)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child("Information").child("Bio").push(prof)
+                #st.success('Successfully uploaded!')
+            
+            an1 = st.text_input('You can choose an animation URL to fancy your profile from the below website')
+            st.write("https://lottiefiles.com")
+            upload_new = st.button('Upload',key=3)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child("Information").child("Lottie").push(an1)
+                #st.success('Successfully uploaded!')
+            
+            br_desc = st.text_input('Enter a brief description about yourself')
+            upload_new = st.button('Upload',key=4)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child('Information').child("descr").push(br_desc)
+            
+            sm_handle =  st.text_input('Enter your social media handle')
+            upload_new = st.button('Upload',key=5)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
+            
+            pr_desc = st.text_input('Tell people more about yourself')
+            upload_new = st.button('Upload',key=6)
+            if upload_new:
+                uid = user['localId']
+                result = db.child(uid).child('Information').child("About").push(pr_desc)
+
+
         un_sub = False
         if un_sub:
             authentication_status = True
             if authentication_status == True:
-            #st.set_page_config(page_title="Ojasva Singh 🤩🫦", page_icon = "👁️", layout="wide")
                 def load_ani(url):
                     req = requests.get(url)
                     if(req.status_code!=200):
@@ -176,7 +394,7 @@ if choice == 'Login':
                     return req.json()
 
                 ani1 = load_ani("https://assets4.lottiefiles.com/packages/lf20_iv4dsx3q.json")
-                ani2 = load_ani("https://assets8.lottiefiles.com/packages/lf20_Y8UeVt.json")
+                #ani2 = load_ani("https://assets8.lottiefiles.com/packages/lf20_Y8UeVt.json")
 
                 with st.container():
                     st.subheader("Hi, I am Ojasva :wave:")
