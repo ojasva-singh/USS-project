@@ -58,9 +58,48 @@ if choice == 'Login':
   if login:
      user = auth.sign_in_with_email_and_password(email,password)
      st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>',unsafe_allow_html=True)
-     bio = st.radio('Go to',['Community Page','Profile','Contact Me'])
+     bio = st.radio('Go to',['Community Page','New Post','Profile','Contact Me'])
 
      if bio == 'Community Page':
+         all_users = db.get()
+         res = []
+         #store users handle name
+         for item in all_users.each():
+             un_val = item.val()["Username"]
+             res.append(un_val)
+            
+         #Total users
+         n = len(res)
+         st.write('Total users here: '+str(n))
+
+         #Choice for selecting a different user
+         choice = st.selectbox('Peope',res)
+         push = st.button('Show profile')
+
+         if push:
+             for item in all_users.each():
+                 i_val = item.val()["Username"]
+                 if i_val == choice:
+                     uid = item.val()["ID"]
+                     usn = db.child(uid).child("Handle").get().val()
+                     st.markdown(usn,unsafe_allow_html=True)
+
+                     nimg = db.child(uid).child("Image").get().val()
+                     if nimg is not None:
+                         val = db.child(uid).child("Image").get()
+                         for item in val.each():
+                             img_choice = item.val()
+                             st.image(img_choice)
+                     else:
+                         st.info("No profile picture yet")
+                    
+                     all_post = db.child(uid).child("Posts").get()
+                     if all_post.val() is not None:
+                         for item in reversed(all_post.each()):
+                             st.write(item.val())
+                             
+                             
+     if bio == 'New Post':
          st.write("\n")
          st.write("\n")
          c1,c2 = st.columns(2)
