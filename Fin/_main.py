@@ -149,17 +149,18 @@ if choice == 'Login':
 
                             br_desc = db.child(uid).child("Information").child("descr").get()
                             if br_desc is not None:
-                                for item in br_desc.each():
-                                    fin = item.val()
-                                st.write(fin)
+                                if br_desc.each() is not None:
+                                    for item in br_desc.each():
+                                        fin = item.val()
+                                    st.write(fin)
                             sm = db.child(uid).child("Information").child("SocialMedia").get()
-                            if sm is not None:
+                            if sm is not None and sm.each() is not None:
                                 for item in sm.each():
                                     fin = item.val()
                                 st.write(fin)
 
                     about = db.child(uid).child("Information").child("About").get()
-                    if about is not None:
+                    if about is not None and about.each() is not None:
                         with st.container():
                                 st.write("---")
                                 left_col , right_col = st.columns(2)
