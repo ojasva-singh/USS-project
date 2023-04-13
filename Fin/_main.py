@@ -158,13 +158,13 @@ if choice == 'Login':
                             with st.container():
                                     #name = db.child(user['localId']).child("Information").child("Name").get()
                                     name = db.child(uid).child("Information").child("Name").get()
-                                    if name.val() is not None:
+                                    if name.val() is not None and name.each() is not None:
                                         for item in name.each():
                                             fin = item.val()
                                         st.subheader(fin)
 
                                     prof = db.child(uid).child("Information").child("Bio").get()
-                                    if prof.val() is not None:
+                                    if prof.val() is not None and prof.each() is not None:
                                         for item in prof.each():
                                             fin = item.val()
                                         st.title(fin)
@@ -258,30 +258,30 @@ if choice == 'Login':
                     with st.container():
                             #name = db.child(user['localId']).child("Information").child("Name").get()
                             name = db.child(user['localId']).child("Information").child("Name").get()
-                            if name.val() is not None:
+                            if name.val() is not None and name.each() is not None:
                                 for item in name.each():
                                     fin = item.val()
                                 st.subheader(fin)
 
                             prof = db.child(user['localId']).child("Information").child("Bio").get()
-                            if prof.val() is not None:
+                            if prof.val() is not None and prof.each() is not None:
                                 for item in prof.each():
                                     fin = item.val()
                                 st.title(fin)
 
                             br_desc = db.child(user['localId']).child("Information").child("descr").get()
-                            if br_desc is not None:
+                            if br_desc is not None and br_desc.each() is not None:
                                 for item in br_desc.each():
                                     fin = item.val()
                                 st.write(fin)
                             sm = db.child(user['localId']).child("Information").child("SocialMedia").get()
-                            if sm is not None:
+                            if sm is not None and sm.each() is not None:
                                 for item in sm.each():
                                     fin = item.val()
                                 st.write(fin)
 
                     about = db.child(user['localId']).child("Information").child("About").get()
-                    if about is not None:
+                    if about is not None and about.each() is not None:
                         with st.container():
                                 st.write("---")
                                 left_col , right_col = st.columns(2)
@@ -293,7 +293,7 @@ if choice == 'Login':
                                     st.write(fin)
                                 with right_col:
                                     an1 = db.child(user['localId']).child("Information").child("Lottie").get()
-                                    if an1 is not None:
+                                    if an1 is not None and an1.each() is not None:
                                         for item in an1.each():
                                             fin = item.val()
                                         ani1 = load_ani(fin)
@@ -308,21 +308,21 @@ if choice == 'Login':
                             fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
                             a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
                             db.child(user['localId']).child("Image").push(a_imgdata_url)
-                            #st.success('Successfully uploaded!')
+                            st.success('Successfully uploaded!')
                         
                         name = st.text_input('Enter your name')
                         upload_new = st.button('Upload',key=1)
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child("Information").child("Name").push(name)
-                            #st.success('Successfully uploaded!')
+                            st.success('Successfully uploaded!')
                         
                         prof = st.text_input('Enter your bio')
                         upload_new = st.button('Upload',key=2)
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child("Information").child("Bio").push(prof)
-                            #st.success('Successfully uploaded!')
+                            st.success('Successfully uploaded!')
                         
                         an1 = st.text_input('You can choose an animation URL to fancy your profile from the below website')
                         st.write("https://lottiefiles.com")
@@ -330,33 +330,37 @@ if choice == 'Login':
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child("Information").child("Lottie").push(an1)
-                            #st.success('Successfully uploaded!')
+                            st.success('Successfully uploaded!')
                         
                         br_desc = st.text_input('Enter a brief description about yourself')
                         upload_new = st.button('Upload',key=4)
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child('Information').child("descr").push(br_desc)
+                            st.success('Successfully uploaded!')
                         
                         sm_handle =  st.text_input('Enter your social media handle')
                         upload_new = st.button('Upload',key=5)
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
+                            st.success('Successfully uploaded!')
                         
                         pr_desc = st.text_input('Tell people more about yourself')
                         upload_new = st.button('Upload',key=6)
                         if upload_new:
                             uid = user['localId']
                             result = db.child(uid).child('Information').child("About").push(pr_desc)
+                            st.success('Successfully uploaded!')
                         
 
                 #If no image is found
                 else:
                     #st.info("No profile picture yet")
                     newimgpath = st.text_input('Enter the path of your image')
-                    upload_new = st.button('Upload')
-                    if upload_new:
+                    #upload_new = st.button('Upload')
+                    upload_new = True
+                    if upload_new == False:
                         uid = user['localId']
                         #Stored initiated bucket in firebase
                         fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
@@ -366,44 +370,91 @@ if choice == 'Login':
                         db.child(user['localId']).child("Image").push(a_imgdata_url)
 
                     name = st.text_input('Enter your name')
-                    upload_new = st.button('Upload',key=1)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child("Information").child("Name").push(name)
-                        #st.success('Successfully uploaded!')
+                    ###upload_new = st.button('Upload',key=1)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child("Information").child("Name").push(name)
+                    #st.success('Successfully uploaded!')
                     
                     prof = st.text_input('Enter your bio')
-                    upload_new = st.button('Upload',key=2)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child("Information").child("Bio").push(prof)
-                        #st.success('Successfully uploaded!')
+                    ###upload_new = st.button('Upload',key=2)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child("Information").child("Bio").push(prof)
+                    #st.success('Successfully uploaded!')
                     
                     an1 = st.text_input('You can choose an animation URL to fancy your profile from the below website')
                     st.write("https://lottiefiles.com")
-                    upload_new = st.button('Upload',key=3)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child("Information").child("Lottie").push(an1)
-                        #st.success('Successfully uploaded!')
+                    ###upload_new = st.button('Upload',key=3)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child("Information").child("Lottie").push(an1)
+                    #st.success('Successfully uploaded!')
                     
                     br_desc = st.text_input('Enter a brief description about yourself')
-                    upload_new = st.button('Upload',key=4)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child('Information').child("descr").push(br_desc)
+                    ###upload_new = st.button('Upload',key=4)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child('Information').child("descr").push(br_desc)
                     
                     sm_handle =  st.text_input('Enter your social media handle')
-                    upload_new = st.button('Upload',key=5)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
+                    ###upload_new = st.button('Upload',key=5)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
                     
                     pr_desc = st.text_input('Tell people more about yourself')
-                    upload_new = st.button('Upload',key=6)
-                    if upload_new:
-                        uid = user['localId']
-                        result = db.child(uid).child('Information').child("About").push(pr_desc)
+                    ###upload_new = st.button('Upload',key=6)
+                    ###if upload_new:
+                    ###uid = user['localId']
+                    ###result = db.child(uid).child('Information').child("About").push(pr_desc)
+                    uid = user['localId']
+                    upload_new = st.button('Upload',key=10)
+                    try:
+                        if upload_new:
+                            if newimgpath == "":
+                                st.write(0/0)
+
+                            result = db.child(uid).child("Information").child("Name").push(name)
+                            if name == "":
+                                #print("snvdjkkjvsd")
+                                st.write(0/0)
+                            
+                            result = db.child(uid).child("Information").child("Bio").push(prof)
+                            if prof == "":
+                                st.write(0/0)
+                            
+                            result = db.child(uid).child("Information").child("Lottie").push(an1)
+                            if an1 == "":
+                                st.write(0/0)
+                            
+                            result = db.child(uid).child('Information').child("descr").push(br_desc)
+                            if br_desc == "":
+                                st.write(0/0)
+                            
+                            result = db.child(uid).child('Information').child("SocialMedia").push(sm_handle)
+                            if sm_handle == "":
+                                st.write(0/0)
+                            
+                            result = db.child(uid).child('Information').child("About").push(pr_desc)
+                            if pr_desc == "":
+                                st.write(0/0)
+
+                            if newimgpath == "":
+                                st.write(0/0)
+                            else:
+                                fireb_upload = storage.child(uid).put(newimgpath,user['idToken'])
+                                #URL for easy access
+                                a_imgdata_url = storage.child(uid).get_url(fireb_upload['downloadTokens'])
+                                #Put in realtime database
+                                result = db.child(user['localId']).child("Image").push(a_imgdata_url)
+                            
+                            st.success("Successfull!!!")
+                            
+                            
+                    except:
+                        st.error("Please fill all the fields")
+
 
 
                 un_sub = False
@@ -471,4 +522,3 @@ if choice == 'Login':
 
      except:
          st.error("Invalid Credentials please login again")
-    
