@@ -5,7 +5,9 @@ from datetime import datetime
 from collections.abc import Mapping
 from streamlit_lottie import st_lottie
 import requests
-
+import cv2
+import numpy as np
+#from deepface import DeepFace
 
 #Firebase config key
 firebaseConfig = {
@@ -54,6 +56,8 @@ if choice == 'Sign Up':
                 streamlit.success('Account created successfully, please verify your email address with the link that we have mailed you')
                 streamlit.snow()
                 streamlit.title('Welcome ' + un)
+                streamlit.info('Please upload your picture for face authentication')
+                #uploaded_file = st.file_uploader('Upload a face image', type=['jpg', 'jpeg', 'png'])
                 streamlit.info('Please login again through the sidebar')
         else:
             st.error("Passwords don't match, please recheck your password")
